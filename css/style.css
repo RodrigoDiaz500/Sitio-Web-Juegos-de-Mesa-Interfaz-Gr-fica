@@ -9,12 +9,22 @@
 }
 
 /* --- Estilos Generales --- */
+/* SOLUCIÓN STICKY FOOTER: Asegura que html y body ocupen toda la altura de la ventana */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
+    /* margin: 0; ya cubierto por html, body */
     background-color: var(--color-fondo-claro);
     color: var(--color-texto);
     line-height: 1.6;
+    /* SOLUCIÓN STICKY FOOTER: Habilita Flexbox en el body para la distribución vertical */
+    display: flex;
+    flex-direction: column;
 }
 
 header {
@@ -98,6 +108,8 @@ nav a:hover, nav a.active {
 }
 
 main {
+    /* SOLUCIÓN STICKY FOOTER: Permite que el contenido principal crezca y empuje el footer */
+    flex-grow: 1;
     padding: var(--espaciado-mediano);
     max-width: 1200px;
     margin: 20px auto;
@@ -129,6 +141,7 @@ footer {
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     animation: fadeIn 1s ease-out; /* Animación para cada categoría */
+    height: 100%; /* Asegura que todos los items de la grid tengan la misma altura */
 }
 
 @keyframes fadeIn {
@@ -184,6 +197,7 @@ footer {
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     animation: slideInUp 0.8s ease-out; /* Animación de entrada para fichas de juego */
+    height: 100%; /* Asegura que todos los items de la grid tengan la misma altura */
 }
 
 @keyframes slideInUp {
@@ -246,33 +260,49 @@ footer {
     100% { opacity: 0.7; }
 }
 
-/* --- Media Queries para Responsividad --- */
+/* --- Estilos para el Formulario de Registro --- */
+.registro-form-section {
+    max-width: 700px;
+    margin: 50px auto;
+}
 
-/* Teléfonos (hasta 768px) */
-@media (max-width: 768px) {
-    /* Ajustes para el branding en móviles */
+/* Nueva clase para manipulación JS (ej. en el footer) */
+.footer-dynamic-color {
+    background-color: var(--color-primario);
+    transition: background-color 0.5s ease;
+}
+
+
+/* --- Media Queries para Responsividad (ajustadas) --- */
+
+/* Teléfonos (hasta 767.98px) */
+@media (max-width: 767.98px) {
+    header h1 {
+        font-size: 1.8em;
+    }
+
     .site-branding {
-        flex-direction: column; /* Apila el logo y el título */
+        flex-direction: column;
         margin-bottom: 0;
     }
 
     .site-logo {
-        max-height: 60px; /* Reduce el tamaño del logo */
-        margin-right: 0; /* Elimina el margen lateral */
-        margin-bottom: 10px; /* Añade margen inferior */
+        max-height: 60px;
+        margin-right: 0;
+        margin-bottom: 10px;
     }
 
     .site-branding h1 {
-        font-size: 1.8em; /* Reduce el tamaño del título */
-        margin-bottom: 10px; /* Añade espacio si el eslogan va debajo */
+        font-size: 1.5em;
+        margin-bottom: 10px;
     }
 
-    header p { /* Ajuste para el eslogan en móviles */
+    header p {
         font-size: 0.9em;
     }
 
     nav {
-        flex-direction: column; /* Apila los enlaces de navegación */
+        flex-direction: column;
     }
 
     nav a {
@@ -280,24 +310,37 @@ footer {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .categoria-grid, .listado-juegos {
-        grid-template-columns: 1fr; /* Una sola columna para todo */
-        gap: 15px;
+    /* Asegúrate de que las columnas de Bootstrap se apilen correctamente en móviles */
+    .categoria-grid .col-12, .listado-juegos .col-12,
+    .registro-form-section .col-md-6, .registro-form-section .col-md-12 {
+        padding-left: calc(var(--bs-gutter-x) * .5);
+        padding-right: calc(var(--bs-gutter-x) * .5);
     }
 
-    .categoria-item, .juego-ficha {
-        padding: 15px;
+    /* Ajuste de padding-right del input en móviles */
+    .password-input-container input[type="password"],
+    .password-input-container input[type="text"] {
+        padding-right: 3rem !important; /* Menor padding para móviles */
+    }
+
+    /* Ajuste del padding-right del wrapper del ojo en móviles */
+    .password-toggle-wrapper {
+        right: 0.75rem; /* Ajusta la posición del ojo en móviles */
     }
 }
 
-/* Tablets (entre 769px y 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
+/* Tablets (entre 768px y 991.98px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    /* Bootstrap ya maneja la rejilla con .col-md-X */
     .categoria-grid {
         grid-template-columns: repeat(2, 1fr); /* Dos columnas para categorías */
     }
-
     .listado-juegos {
         grid-template-columns: repeat(2, 1fr); /* Dos columnas para juegos */
     }
 }
 
+/* Escritorio (992px y más) */
+@media (min-width: 992px) {
+    /* Bootstrap ya maneja la rejilla con .col-lg-X */
+}
