@@ -1,368 +1,342 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('registroForm');
-    // Asegúrate de que el formulario existe antes de añadir el event listener
-    if (form) {
-        form.addEventListener('submit', function(event) {
-            // Previene el envío por defecto para la validación manual
-            event.preventDefault();
+    const registroForm = document.getElementById('registroForm');
+    const fullNameInput = document.getElementById('fullName'); // Added
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const dobInput = document.getElementById('dob');
+    const addressInput = document.getElementById('address'); // Added for optional check
+    const togglePasswordButtons = document.querySelectorAll('.toggle-password');
+    const mainFooter = document.getElementById('main-footer');
+    const formMessage = document.getElementById('form-message'); // Element for general messages
 
-            // Ejecuta la validación principal
-            const formIsValid = validarFormulario(form); // Guarda el resultado de la validación
+    // Ensure Bootstrap validation is not overriden by native HTML5 validation
+    registroForm.setAttribute('novalidate', '');
+    registroForm.classList.add('needs-validation');
 
-            if (formIsValid) {
-                // Si el formulario es válido, puedes hacer algo aquí, como enviar datos
-                alert('¡Formulario enviado con éxito!');
-                form.reset(); // Limpia el formulario
-                // Remover clases de validación después de limpiar un formulario exitoso
-                form.querySelectorAll('.form-control, .form-select').forEach(el => {
-                    el.classList.remove('is-valid', 'is-invalid');
-                });
-                form.classList.remove('was-validated'); // IMPORTANTE: Remover la clase para futuras interacciones
+    // Function to update footer color based on form validity
+    function updateFooterColor(isValid) {
+        if (mainFooter) {
+            if (isValid) {
+                mainFooter.style.backgroundColor = '#27ae60'; // Green for valid
             } else {
-                // Si la validación falla, Bootstrap mostrará los mensajes de error
-                console.log('Formulario no válido. Revise los errores.');
+                mainFooter.style.backgroundColor = '#e74c3c'; // Red for invalid
             }
-
-            // === LA SOLUCIÓN CLAVE PARA BOOTSTRAP ===
-            // Añade la clase 'was-validated' al formulario. Esto le dice a Bootstrap que
-            // muestre los mensajes de feedback basados en las clases 'is-invalid' o 'is-valid'.
-            // Esta línea debe ejecutarse SIEMPRE que se intente enviar el formulario,
-            // ya sea válido o no, para que el feedback se muestre.
-            form.classList.add('was-validated');
-        });
-
-        // Eventos para validación en tiempo real (al escribir o cambiar)
-        document.getElementById('nombreCompleto').addEventListener('input', () => validarCampo(document.getElementById('nombreCompleto')));
-        document.getElementById('nombreUsuario').addEventListener('input', () => validarCampo(document.getElementById('nombreUsuario')));
-        document.getElementById('email').addEventListener('input', validarEmail);
-
-        // Eventos para los campos de Contraseña (input y blur para validación en tiempo real)
-        document.getElementById('password').addEventListener('input', validarPassword);
-        document.getElementById('password').addEventListener('blur', validarPassword);
-        document.getElementById('confirmPassword').addEventListener('input', validarPasswordConfirmacion);
-        document.getElementById('confirmPassword').addEventListener('blur', validarPasswordConfirmacion);
-
-        // Eventos para Fecha de Nacimiento
-        document.getElementById('fechaNacimiento').addEventListener('change', validarFechaNacimiento);
-        document.getElementById('fechaNacimiento').addEventListener('blur', validarFechaNacimiento);
-
-        // Agregando validación inmediata al cargar el DOM para los campos requeridos
-        // y para mostrar el estado inicial si ya hay valores (útil para campos de fecha por ejemplo)
-        form.querySelectorAll('[required]').forEach(input => {
-            input.addEventListener('blur', () => validarCampo(input)); // Valida al perder el foco
-        });
+        }
     }
 
-
-    // Ejemplo de manipulación del DOM y CSS con JavaScript (existente)
-    const footer = document.querySelector('footer');
-    if (footer) {
-        footer.classList.add('footer-dynamic-color');
+    // Function to reset footer color to default (from CSS)
+    function resetFooterColor() {
+        if (mainFooter) {
+            mainFooter.style.backgroundColor = ''; // Revert to CSS default
+        }
     }
 
-    const mainHeaderH1 = document.querySelector('header h1');
-    // Asegurarse de que esta manipulación solo ocurra en la página de inicio si es deseado
-    if (mainHeaderH1 && window.location.pathname.endsWith('index.html')) {
-        const originalText = mainHeaderH1.textContent;
-        mainHeaderH1.addEventListener('mouseover', function() {
-            mainHeaderH1.textContent = "¡Explora nuestros juegos!";
-            mainHeaderH1.style.color = 'yellow';
-        });
-        mainHeaderH1.addEventListener('mouseout', function() {
-            mainHeaderH1.textContent = originalText;
-            mainHeaderH1.style.color = 'white';
-        });
+    // Helper function to get the feedback element (invalid-feedback/valid-feedback)
+    function getFeedbackElement(inputElement) {
+        // Specific feedback IDs for password fields
+        if (inputElement.id === 'password' && document.getElementById('passwordFeedback')) {
+            return document.getElementById('passwordFeedback');
+        }
+        if (inputElement.id === 'confirmPassword' && document.getElementById('confirmPasswordFeedback')) {
+            return document.getElementById('confirmPasswordFeedback');
+        }
+        if (inputElement.id === 'dob' && document.getElementById('dobFeedback')) { // Added for DOB
+            return document.getElementById('dobFeedback');
+        }
+
+        // Try to find the next sibling with feedback classes
+        let currentSibling = inputElement.nextElementSibling;
+        while (currentSibling) {
+            if (currentSibling.classList.contains('invalid-feedback') || currentSibling.classList.contains('valid-feedback')) {
+                return currentSibling;
+            }
+            currentSibling = currentSibling.nextElementSibling;
+        }
+
+        // If input is wrapped in a container (like .input-group), feedback might be sibling of the parent
+        if (inputElement.parentElement && inputElement.parentElement.classList.contains('input-group')) {
+            let parentSibling = inputElement.parentElement.nextElementSibling;
+            while (parentSibling) {
+                if (parentSibling.classList.contains('invalid-feedback') || parentSibling.classList.contains('valid-feedback')) {
+                    return parentSibling;
+                }
+                parentSibling = parentSibling.nextElementSibling;
+            }
+        }
+
+        // As a last resort, check within the immediate parent (useful for checkboxes/radios)
+        if (inputElement.parentElement) {
+            const directChildFeedback = inputElement.parentElement.querySelector('.invalid-feedback, .valid-feedback');
+            if (directChildFeedback) return directChildFeedback;
+        }
+
+        return null;
     }
 
-    // Mostrar/ocultar contraseña
-    document.querySelectorAll('.toggle-password').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const inputId = this.getAttribute('data-target');
-            const input = document.getElementById(inputId);
+    // Function to show/hide Bootstrap feedback messages
+    function showFeedback(input, message, isValid) {
+        const feedbackElement = getFeedbackElement(input);
+        if (feedbackElement) {
+            // Remove previous feedback classes
+            feedbackElement.classList.remove('d-block');
+            input.classList.remove('is-valid', 'is-invalid');
+
+            if (!isValid) {
+                feedbackElement.textContent = message;
+                feedbackElement.classList.add('d-block');
+                feedbackElement.classList.remove('valid-feedback');
+                feedbackElement.classList.add('invalid-feedback');
+                input.classList.add('is-invalid');
+            } else {
+                feedbackElement.textContent = ''; // Clear message if valid
+                feedbackElement.classList.remove('invalid-feedback');
+                feedbackElement.classList.add('valid-feedback');
+                input.classList.add('is-valid');
+            }
+        }
+    }
+
+    // --- Validation Functions ---
+    function validateFullName() {
+        const fullName = fullNameInput.value.trim();
+        if (fullName === '') {
+            showFeedback(fullNameInput, 'El campo Nombre Completo es obligatorio.', false);
+            return false;
+        } else {
+            showFeedback(fullNameInput, '', true);
+            return true;
+        }
+    }
+
+    function validateUsername() {
+        const username = usernameInput.value.trim();
+        if (username.length >= 4 && username.length <= 20) {
+            showFeedback(usernameInput, '', true);
+            return true;
+        } else {
+            showFeedback(usernameInput, 'El campo Nombre de Usuario es obligatorio y debe tener entre 4 y 20 caracteres.', false);
+            return false;
+        }
+    }
+
+    function validateEmail() {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(emailInput.value.trim())) {
+            showFeedback(emailInput, '', true);
+            return true;
+        } else {
+            showFeedback(emailInput, 'Por favor, introduce un correo electrónico válido.', false);
+            return false;
+        }
+    }
+
+    function validatePassword() {
+        // Minimum 6 characters, maximum 18, at least one number and one uppercase letter
+        const passwordRegex = /^(?=.*\d)(?=.*[A-Z]).{6,18}$/;
+        if (passwordRegex.test(passwordInput.value)) {
+            showFeedback(passwordInput, '', true);
+            return true;
+        } else {
+            showFeedback(passwordInput, 'La contraseña debe tener entre 6 y 18 caracteres, al menos un número y una mayúscula.', false);
+            return false;
+        }
+    }
+
+    function validateConfirmPassword() {
+        // Only validate if password field is also valid, or if it's not empty and matches
+        if (confirmPasswordInput.value === passwordInput.value && confirmPasswordInput.value !== '') {
+            showFeedback(confirmPasswordInput, '', true);
+            return true;
+        } else {
+            showFeedback(confirmPasswordInput, 'Las contraseñas no coinciden.', false);
+            return false;
+        }
+    }
+
+    function validateDob() {
+        const dobValue = dobInput.value;
+        if (!dobValue) {
+            showFeedback(dobInput, 'Por favor, introduce una fecha de nacimiento válida.', false);
+            return false;
+        }
+
+        const dob = new Date(dobValue);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+            age--;
+        }
+
+        if (age >= 13) { // Check for at least 13 years old
+            showFeedback(dobInput, '', true);
+            return true;
+        } else {
+            showFeedback(dobInput, 'Debes tener al menos 13 años para registrarte.', false);
+            return false;
+        }
+    }
+
+    // Address is optional, so no specific `validateAddress` function is needed for emptiness.
+    // However, if you had format rules, you'd add one.
+
+    // --- EVENT LISTENERS ---
+
+    // Real-time validation on input/change
+    fullNameInput.addEventListener('input', validateFullName); // Added
+    usernameInput.addEventListener('input', validateUsername);
+    emailInput.addEventListener('input', validateEmail);
+    dobInput.addEventListener('change', validateDob); // 'change' is better for date inputs
+
+    // Password and Confirm Password validation logic
+    passwordInput.addEventListener('input', function() {
+        validatePassword();
+        if (confirmPasswordInput.value !== '') { // Revalidate confirm if it already has a value
+            validateConfirmPassword();
+        }
+    });
+
+    confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+
+
+    // Toggle password visibility
+    togglePasswordButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const targetInput = document.getElementById(targetId);
             const icon = this.querySelector('i');
-            if (input.type === "password") {
-                input.type = "text";
+
+            if (targetInput.type === 'password') {
+                targetInput.type = 'text';
                 icon.classList.remove('fa-eye');
                 icon.classList.add('fa-eye-slash');
             } else {
-                input.type = "password";
+                targetInput.type = 'password';
                 icon.classList.remove('fa-eye-slash');
                 icon.classList.add('fa-eye');
             }
         });
     });
 
-    // Validación en tiempo real
-    document.getElementById('password').addEventListener('input', function () {
-        const feedback = document.getElementById('passwordFeedback');
-        const regex = /^(?=.*[A-Z])(?=.*\d).{6,18}$/;
-        if (!regex.test(this.value)) {
-            feedback.classList.add('visible');
+    // Handle form submission
+    registroForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Stop default submission
+
+        // Execute all validations
+        const isFullNameValid = validateFullName(); // Added
+        const isUsernameValid = validateUsername();
+        const isEmailValid = validateEmail();
+        const isPasswordValid = validatePassword();
+        const isConfirmPasswordValid = validateConfirmPassword();
+        const isDobValid = validateDob();
+
+        // Check if all required fields are valid
+        const allFieldsValid = isFullNameValid && isUsernameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid && isDobValid;
+
+        if (allFieldsValid) {
+            registroForm.classList.add('was-validated'); // Add Bootstrap's class for success validation display
+            formMessage.textContent = '¡Registro exitoso! Tus datos han sido enviados.';
+            formMessage.classList.remove('text-danger');
+            formMessage.classList.add('text-success');
+            updateFooterColor(true); // Change footer color to green
+
+            // In a real application, you would send the form data to a server here.
+            // console.log('Formulario enviado:', {
+            //     fullName: fullNameInput.value,
+            //     username: usernameInput.value,
+            //     email: emailInput.value,
+            //     // NEVER send plain passwords in a real app!
+            //     // password: passwordInput.value,
+            //     dob: dobInput.value,
+            //     address: addressInput.value // Optional field value
+            // });
+
+            // Clear the form and reset validation display after successful submission
+            setTimeout(() => { // Use timeout to allow message to display
+                registroForm.reset();
+                registroForm.classList.remove('was-validated');
+                document.querySelectorAll('.form-control, .form-check-input').forEach(input => {
+                    input.classList.remove('is-valid', 'is-invalid');
+                    const feedback = getFeedbackElement(input);
+                    if (feedback) {
+                        feedback.classList.remove('d-block', 'valid-feedback', 'invalid-feedback');
+                        feedback.textContent = '';
+                    }
+                });
+                formMessage.textContent = ''; // Clear success message
+                formMessage.classList.remove('text-success', 'text-danger');
+                resetFooterColor(); // Reset footer color
+            }, 1500); // Wait 1.5 seconds before resetting
         } else {
-            feedback.classList.remove('visible');
+            registroForm.classList.add('was-validated'); // If failure, add Bootstrap's class to show errors
+            formMessage.textContent = 'Por favor, corrige los errores en el formulario para continuar.';
+            formMessage.classList.remove('text-success');
+            formMessage.classList.add('text-danger');
+            updateFooterColor(false); // Change footer color to red
         }
     });
-});
 
-// --- FUNCIONES DE AYUDA PARA ENCONTRAR EL FEEDBACK ---
-/**
- * Encuentra el elemento de feedback (invalid-feedback o valid-feedback) asociado a un input.
- * Se busca entre los hermanos del input, o hijos del padre del input.
- * Esto es robusto para casos donde hay iconos u otros elementos entre el input y el feedback.
- * @param {HTMLElement} inputElement El elemento input cuyo feedback se quiere encontrar.
- * @returns {HTMLElement|null} El elemento de feedback encontrado o null si no se encuentra.
- */
-function getFeedbackElement(inputElement) {
-    // Primero, intenta encontrarlo como un hermano posterior al input
-    let currentSibling = inputElement.nextElementSibling;
-    while (currentSibling) {
-        if (currentSibling.classList.contains('invalid-feedback') || currentSibling.classList.contains('valid-feedback')) {
-            return currentSibling;
-        }
-        currentSibling = currentSibling.nextElementSibling;
-    }
-
-    // Si no se encontró como hermano posterior, intenta buscarlo dentro del mismo contenedor padre
-    // (Útil si el feedback es el primer hijo o está en otro lugar dentro del contenedor del input)
-    if (inputElement.parentElement) {
-        const feedback = inputElement.parentElement.querySelector('.invalid-feedback, .valid-feedback');
-        if (feedback) return feedback;
-    }
-
-    return null; // No se encontró ningún elemento de feedback
-}
-
-// --- Funciones de Ayuda para las Validaciones y Feedback ---
-
-// Función genérica para campos no vacíos (o para validar al blur/input)
-function validarCampo(elemento) {
-    // Estas funciones ya tienen su propia lógica de validación, no las re-valides aquí.
-    if (elemento.id === 'password' || elemento.id === 'confirmPassword' || elemento.id === 'email' || elemento.id === 'fechaNacimiento') {
-        return;
-    }
-
-    if (elemento.value.trim() === '') {
-        // Solo si es un campo obligatorio
-        if (elemento.hasAttribute('required')) {
-            // Si el mensaje predeterminado del HTML es suficiente, no necesitas pasarlo aquí.
-            mostrarError(elemento, 'Este campo es obligatorio.');
-        } else {
-            elemento.classList.remove('is-invalid', 'is-valid'); // Limpiar si es opcional y está vacío
-        }
-    } else {
-        mostrarValido(elemento);
-    }
-}
-
-// === FUNCIONES MODIFICADAS PARA USAR getFeedbackElement ===
-function mostrarError(elemento, mensaje) {
-    elemento.classList.remove('is-valid');
-    elemento.classList.add('is-invalid');
-    const feedbackDiv = getFeedbackElement(elemento); // <--- USANDO LA NUEVA FUNCIÓN
-    if (feedbackDiv) {
-        feedbackDiv.textContent = mensaje;
-    }
-}
-
-function mostrarValido(elemento) {
-    elemento.classList.remove('is-invalid');
-    elemento.classList.add('is-valid');
-    const feedbackDiv = getFeedbackElement(elemento); // <--- USANDO LA NUEVA FUNCIÓN
-    if (feedbackDiv) {
-        feedbackDiv.textContent = ''; // Limpia el mensaje si es válido
-    }
-}
-// === FIN DE FUNCIONES MODIFICADAS ===
-
-
-function validarEmailFormato(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
-function validarPasswordComplejidad(password) {
-    const longitudValida = password.length >= 6 && password.length <= 18;
-    const tieneNumero = /[0-9]/.test(password);
-    const tieneMayuscula = /[A-Z]/.test(password);
-    return longitudValida && tieneNumero && tieneMayuscula;
-}
-
-function validarEdadMinima(fechaNacimientoStr, edadMinima) {
-    const fechaNacimiento = new Date(fechaNacimientoStr);
-    const hoy = new Date();
-    let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
-    const mes = hoy.getMonth() - fechaNacimiento.getMonth();
-    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
-        edad--;
-    }
-    return edad >= edadMinima;
-}
-
-// Funciones de validación específicas para el evento 'input' (validación en tiempo real)
-function validarEmail() {
-    const email = document.getElementById('email');
-    if (email.value.trim() === '') {
-        mostrarError(email, 'El correo electrónico es obligatorio.');
-    } else if (!validarEmailFormato(email.value)) {
-        mostrarError(email, 'Por favor, introduce un correo electrónico válido.');
-    } else {
-        mostrarValido(email);
-    }
-}
-
-function validarPassword() {
-    const password = document.getElementById('password');
-    if (password.value.trim() === '') {
-        mostrarError(password, 'La contraseña es obligatoria.');
-    } else if (!validarPasswordComplejidad(password.value)) {
-        mostrarError(password, 'La contraseña debe tener entre 6 y 18 caracteres, al menos un número y una mayúscula.');
-    } else {
-        mostrarValido(password);
-    }
-    // Re-validar la confirmación si la contraseña principal cambia
-    const confirmPassword = document.getElementById('confirmPassword');
-    if (confirmPassword && confirmPassword.value.trim() !== '') {
-        validarPasswordConfirmacion();
-    }
-}
-
-// === FUNCIÓN validarPasswordConfirmacion REFINADA ===
-function validarPasswordConfirmacion() {
-    const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('confirmPassword');
-
-    if (confirmPassword.value.trim() === '') {
-        mostrarError(confirmPassword, 'Debes confirmar la contraseña.');
-    } else if (password.value !== confirmPassword.value) {
-        mostrarError(confirmPassword, 'Las contraseñas no coinciden.');
-    } else {
-        mostrarValido(confirmPassword);
-    }
-}
-// === FIN DE FUNCIÓN REFINADA ===
-
-function validarFechaNacimiento() {
-    const fechaNacimiento = document.getElementById('fechaNacimiento');
-    if (fechaNacimiento.value === '') {
-        mostrarError(fechaNacimiento, 'La fecha de nacimiento es obligatoria.');
-    } else if (!validarEdadMinima(fechaNacimiento.value, 13)) {
-        mostrarError(fechaNacimiento, 'Debes tener al menos 13 años para registrarte.');
-    } else {
-        mostrarValido(fechaNacimiento);
-    }
-}
-
-// --- Función principal de validación del formulario ---
-// Esta función permanece igual que tu versión anterior, que funciona correctamente
-// para el proceso de validación en el momento del submit.
-function validarFormulario(form) {
-    let isValid = true;
-
-    // Remover clases de validación previas para revalidar todo en el submit
-    form.querySelectorAll('.form-control, .form-select').forEach(el => {
-        el.classList.remove('is-valid', 'is-invalid');
+    // Handle form reset button
+    registroForm.addEventListener('reset', function() {
+        setTimeout(() => { // Allow browser to clear first, then reset classes
+            document.querySelectorAll('.form-control, .form-check-input').forEach(input => {
+                input.classList.remove('is-valid', 'is-invalid');
+                const feedback = getFeedbackElement(input);
+                if (feedback) {
+                    feedback.classList.remove('d-block', 'valid-feedback', 'invalid-feedback');
+                    feedback.textContent = '';
+                }
+            });
+            registroForm.classList.remove('was-validated');
+            formMessage.textContent = ''; // Clear any messages
+            formMessage.classList.remove('text-success', 'text-danger');
+            resetFooterColor(); // Reset footer color
+        }, 0);
     });
 
-    // 1. Validar Nombre Completo
-    const nombreCompleto = document.getElementById('nombreCompleto');
-    if (nombreCompleto.value.trim() === '') {
-        mostrarError(nombreCompleto, 'El nombre completo es obligatorio.');
-        isValid = false;
-    } else {
-        mostrarValido(nombreCompleto);
-    }
+    // --- Dynamic CSS and HTML manipulation (Examples for requirement 6) ---
 
-    // 2. Validar Nombre de Usuario
-    const nombreUsuario = document.getElementById('nombreUsuario');
-    if (nombreUsuario.value.trim() === '') {
-        mostrarError(nombreUsuario, 'El nombre de usuario es obligatorio.');
-        isValid = false;
-    } else {
-        mostrarValido(nombreUsuario);
-    }
-
-    // 3. Validar Correo Electrónico
-    const email = document.getElementById('email');
-    if (email.value.trim() === '') {
-        mostrarError(email, 'El correo electrónico es obligatorio.');
-        isValid = false;
-    } else if (!validarEmailFormato(email.value)) {
-        mostrarError(email, 'Por favor, introduce un correo electrónico válido.');
-        isValid = false;
-    } else {
-        mostrarValido(email);
-    }
-
-    // 4. Validar Contraseñas
-    const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('confirmPassword');
-
-    let passwordValidoComplejidad = true; // Variable para controlar la validación de la complejidad de la contraseña
-    if (password.value.trim() === '') {
-        mostrarError(password, 'La contraseña es obligatoria.');
-        passwordValidoComplejidad = false;
-        isValid = false;
-    } else if (!validarPasswordComplejidad(password.value)) {
-        mostrarError(password, 'La contraseña debe tener entre 6 y 18 caracteres, al menos un número y una mayúscula.');
-        passwordValidoComplejidad = false;
-        isValid = false;
-    } else {
-        mostrarValido(password);
-    }
-
-    if (confirmPassword.value.trim() === '') {
-        mostrarError(confirmPassword, 'Debes confirmar la contraseña.');
-        isValid = false;
-    } else if (passwordValidoComplejidad && password.value !== confirmPassword.value) {
-        mostrarError(confirmPassword, 'Las contraseñas no coinciden.');
-        isValid = false;
-    } else if (passwordValidoComplejidad) { // Si la primera es válida y coinciden
-        mostrarValido(confirmPassword);
-    } else {
-        // Si la contraseña principal NO es válida por complejidad, la confirmación tampoco debería serlo visualmente
-        confirmPassword.classList.remove('is-valid');
-    }
-
-    // 5. Validar Fecha de Nacimiento
-    const fechaNacimiento = document.getElementById('fechaNacimiento');
-    if (fechaNacimiento.value === '') {
-        mostrarError(fechaNacimiento, 'La fecha de nacimiento es obligatoria.');
-        isValid = false;
-    } else if (!validarEdadMinima(fechaNacimiento.value, 13)) {
-        mostrarError(fechaNacimiento, 'Debes tener al menos 13 años para registrarte.');
-        isValid = false;
-    } else {
-        mostrarValido(fechaNacimiento);
-    }
-
-    // La dirección de despacho es opcional, no necesita validación de vacío
-    const direccion = document.getElementById('direccion');
-    if (direccion.value.trim() !== '') {
-        mostrarValido(direccion);
-    } else {
-        direccion.classList.remove('is-valid', 'is-invalid');
-    }
-
-    // Desplaza la vista al primer error si lo hay
-    if (!isValid) {
-        const firstInvalidField = form.querySelector('.is-invalid');
-        if (firstInvalidField) {
-            firstInvalidField.focus();
-            firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Example 1: Dynamic CSS manipulation (changing footer color on scroll)
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 150) { // If scrolled down more than 150px
+            mainFooter.style.backgroundColor = '#4A90E2'; // A lighter blue/purple
+            mainFooter.style.transition = 'background-color 0.5s ease-in-out';
+        } else {
+            // Revert to original color (from CSS variable or default)
+            mainFooter.style.backgroundColor = 'var(--color-secundario)';
         }
+    });
+
+    // Example 2: Dynamic HTML manipulation (adding a welcome message to the header)
+    const siteBranding = document.querySelector('.site-branding');
+    if (siteBranding && !document.getElementById('header-welcome-message')) { // Prevent adding multiple times
+        const welcomeMessageElement = document.createElement('p');
+        welcomeMessageElement.id = 'header-welcome-message';
+        welcomeMessageElement.style.color = '#e0f2f7'; // Lighter color for visibility
+        welcomeMessageElement.style.fontSize = '1.1em';
+        welcomeMessageElement.style.marginTop = '10px';
+        siteBranding.appendChild(welcomeMessageElement);
     }
 
-    return isValid;
-}
+    // Example 3: Dynamic CSS manipulation (changing nav link styles on hover)
+    const navLinks = document.querySelectorAll('nav a');
+    navLinks.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+            link.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'; // Semi-transparent white
+            link.style.transform = 'scale(1.05)';
+            link.style.textShadow = '0 0 5px rgba(255,255,255,0.7)';
+        });
+        link.addEventListener('mouseleave', () => {
+            link.style.backgroundColor = ''; // Revert to original
+            link.style.transform = 'scale(1)';
+            link.style.textShadow = 'none';
+        });
+        // Ensure initial transition is set
+        link.style.transition = 'background-color 0.3s ease, transform 0.2s ease, text-shadow 0.2s ease';
+    });
 
-// Validación en tiempo real para la contraseña
-document.getElementById('password').addEventListener('input', function() {
-    const feedback = this.parentElement.querySelector('.invalid-feedback');
-    // Cambia la expresión regular según tus requisitos
-    const regex = /^(?=.*[A-Z])(?=.*\d).{6,18}$/;
-    if (!regex.test(this.value)) {
-        feedback.classList.add('visible');
-    } else {
-        feedback.classList.remove('visible');
-    }
+    // Initial footer color set on page load
+    resetFooterColor();
 });

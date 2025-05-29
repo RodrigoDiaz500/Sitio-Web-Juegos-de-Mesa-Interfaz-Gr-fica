@@ -1,15 +1,16 @@
 /* --- Variables CSS --- */
 :root {
-    --color-primario: #3498db; 
-    --color-secundario: #2c3e50; 
-    --color-fondo-claro: #ecf0f1; 
-    --color-texto: #333;
-    --color-descuento: #27ae60; 
-    --espaciado-mediano: 20px;
+    --color-primario: #3498db; /* Azul vibrante */
+    --color-secundario: #2c3e50; /* Azul oscuro/grisáceo */
+    --color-fondo-claro: #ecf0f1; /* Gris muy claro */
+    --color-texto: #333; /* Gris oscuro para texto general */
+    --color-descuento: #27ae60; /* Verde para descuentos */
+    --espaciado-mediano: 20px; /* Espaciado base */
 }
 
 /* --- Estilos Generales --- */
 
+/* Asegura que el body y html ocupen todo el viewport para el sticky footer */
 html, body {
     height: 100%;
     margin: 0;
@@ -17,12 +18,13 @@ html, body {
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif; /* Fuente más común y legible */
     background-color: var(--color-fondo-claro);
     color: var(--color-texto);
     line-height: 1.6;
-    display: flex;
-    flex-direction: column;
+    display: flex; /* Habilita Flexbox para el layout principal */
+    flex-direction: column; /* Coloca los elementos en columna (header, main, footer) */
+    min-height: 100vh; /* Asegura que el body ocupe al menos el 100% de la altura del viewport */
 }
 
 header {
@@ -30,6 +32,7 @@ header {
     color: white;
     text-align: center;
     padding: var(--espaciado-mediano);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil para el encabezado */
 }
 
 /* Estilos para el Logo y el Nombre de la Tienda */
@@ -44,9 +47,9 @@ header {
     max-height: 100px; /* Ajusta la altura máxima del logo */
     width: auto; /* Mantiene la proporción de la imagen */
     margin-right: 15px; /* Espacio entre el logo y el título */
-    border-radius: 50%; /*logo circular */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
-    animation: rotateIn 1s ease-out; /* animación para que el logo aparezca girando */
+    border-radius: 50%; /* Hace que el logo sea circular */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombra para el logo */
+    animation: rotateIn 1s ease-out; /* Animación para que el logo aparezca girando */
 }
 
 /* Animación para el logo */
@@ -61,14 +64,13 @@ header {
     }
 }
 
-
 .site-branding h1 {
-    margin: 0; 
-    font-size: 2.8em; 
-    animation: fadeInDown 1.2s ease-out; /* Retrasa un poco la animación del título */
+    margin: 0;
+    font-size: 2.8em;
+    animation: fadeInDown 1.2s ease-out; /* Animación de entrada para el título */
 }
 
-
+/* Animación para el título */
 @keyframes fadeInDown {
     from {
         opacity: 0;
@@ -83,32 +85,52 @@ header {
 header p { /* Estilo para el eslogan debajo del h1 */
     margin-top: 0;
     font-size: 1.1em;
+    color: rgba(255, 255, 255, 0.9); /* Ligeramente transparente para contraste */
 }
 
 nav {
     background-color: var(--color-secundario);
     padding: 10px 0;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombra para la barra de navegación */
+    z-index: 10; /* Asegura que la nav esté por encima de otros elementos si hay scroll */
 }
 
 nav a {
     color: white;
     text-decoration: none;
     padding: 10px var(--espaciado-mediano);
-    display: inline-block;
-    transition: background-color 0.3s ease;
+    display: inline-block; /* Permite aplicar padding y centrado */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transiciones suaves */
+    font-weight: bold;
 }
 
-nav a:hover, nav a.active {
+nav a:hover {
     background-color: var(--color-primario);
+    transform: translateY(-2px); /* Pequeño efecto de elevación al pasar el mouse */
+}
+
+nav a.active {
+    background-color: var(--color-primario);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3); /* Sombra interna para el elemento activo */
 }
 
 main {
-    flex-grow: 1;
+    flex-grow: 1; /* Permite que el contenido principal ocupe el espacio restante */
     padding: var(--espaciado-mediano);
-    max-width: 1200px;
-    margin: 20px auto;
+    max-width: 1200px; /* Ancho máximo para el contenido principal */
+    margin: 20px auto; /* Centra el contenido principal */
+    box-shadow: 0 0 15px rgba(0,0,0,0.05); /* Sombra ligera para el área de contenido */
+    border-radius: 8px; /* Bordes redondeados */
+    background-color: white; /* Fondo blanco para el contenido */
+}
+
+h2 {
+    color: var(--color-secundario);
+    margin-top: 0;
+    font-size: 2em;
+    text-align: center; /* Centra los títulos */
+    animation: fadeInUp 1s ease-out; /* Animación de entrada para los títulos */
 }
 
 footer {
@@ -116,14 +138,16 @@ footer {
     color: white;
     text-align: center;
     padding: 15px;
-    margin-top: 40px;
+    margin-top: auto; /* Empuja el footer hacia la parte inferior de la página */
+    box-shadow: 0 -4px 8px rgba(0,0,0,0.2); /* Sombra para el footer */
 }
 
 /* Estilos para la Página Principal (Categorías) */
 .categoria-grid {
     display: grid;
+    /* Columnas flexibles que se adaptan, mínimo 250px de ancho */
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--espaciado-mediano);
+    gap: var(--espaciado-mediano); /* Espacio entre los elementos de la cuadrícula */
     margin-top: var(--espaciado-mediano);
 }
 
@@ -134,10 +158,12 @@ footer {
     text-align: center;
     text-decoration: none;
     color: var(--color-texto);
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    animation: fadeIn 1s ease-out; /* Animación para cada categoría */
+    overflow: hidden; /* Oculta cualquier contenido que se salga del borde redondeado */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves al interactuar */
+    animation: fadeIn 1s ease-out; /* Animación de entrada para cada categoría */
     height: 100%; /* Asegura que todos los items de la grid tengan la misma altura */
+    display: flex; /* Permite organizar el contenido interno */
+    flex-direction: column;
 }
 
 @keyframes fadeIn {
@@ -146,10 +172,9 @@ footer {
 }
 
 .categoria-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    /* Animación al pasar el mouse  */
-    animation: pulse 0.5s forwards;
+    transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* Sombra más pronunciada al pasar el mouse */
+    animation: pulse 0.5s forwards; /* Animación de pulso */
 }
 
 @keyframes pulse {
@@ -161,25 +186,30 @@ footer {
 .categoria-item img {
     width: 100%;
     height: 180px; /* Altura fija para las imágenes de categoría */
-    object-fit: cover; 
+    object-fit: cover; /* Recorta la imagen para cubrir el área sin distorsionarla */
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    transition: transform 0.3s ease; 
+    transition: transform 0.3s ease; /* Transición suave para la imagen */
 }
 
 .categoria-item:hover img {
-    transform: scale(1.05); 
+    transform: scale(1.05); /* Zoom ligero en la imagen al pasar el mouse */
 }
 
 .categoria-item h3 {
     margin: 15px 0;
     padding: 0 10px;
     font-size: 1.3em;
+    flex-grow: 1; /* Permite que el título ocupe el espacio restante */
+    display: flex; /* Para centrar el texto verticalmente si el título es corto */
+    align-items: center;
+    justify-content: center;
 }
 
-
+/* Estilos para las Listas de Juegos (Categorías específicas) */
 .listado-juegos {
     display: grid;
+    /* Columnas flexibles que se adaptan, mínimo 300px de ancho */
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--espaciado-mediano);
     margin-top: var(--espaciado-mediano);
@@ -194,6 +224,8 @@ footer {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     animation: slideInUp 0.8s ease-out; /* Animación de entrada para fichas de juego */
     height: 100%; /* Asegura que todos los items de la grid tengan la misma altura */
+    display: flex; /* Habilita Flexbox para el contenido interno */
+    flex-direction: column; /* Organiza el contenido en columna */
 }
 
 @keyframes slideInUp {
@@ -208,38 +240,42 @@ footer {
 }
 
 .juego-ficha:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* Sombra más pronunciada al pasar el mouse */
 }
 
 .juego-ficha img {
     max-width: 100%;
     height: 200px; /* Altura fija para las imágenes de juegos */
-    object-fit: contain; /* Ajusta la imagen sin recortarla */
+    object-fit: contain; /* Ajusta la imagen sin recortarla, manteniendo su proporción */
     border-radius: 4px;
     margin-bottom: 15px;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease; /* Transición suave para la imagen */
 }
 
 .juego-ficha:hover img {
-    transform: scale(1.03);
+    transform: scale(1.03); /* Zoom ligero en la imagen al pasar el mouse */
 }
 
 .juego-ficha h3 {
     margin-top: 0;
     color: var(--color-primario);
+    font-size: 1.4em;
+    flex-grow: 1; /* Permite que el título ocupe el espacio restante */
 }
 
 .juego-ficha .descripcion {
     font-size: 0.9em;
     color: #666;
     margin-bottom: 10px;
+    text-align: justify; /* Justifica el texto de la descripción */
 }
 
 .juego-ficha .precio {
     font-size: 1.2em;
     font-weight: bold;
     color: var(--color-secundario);
+    margin-top: auto; /* Empuja el precio y descuento al final de la ficha */
     margin-bottom: 5px;
 }
 
@@ -247,7 +283,7 @@ footer {
     font-weight: bold;
     color: var(--color-descuento);
     font-size: 0.95em;
-    animation: blink 2s infinite alternate;
+    animation: blink 2s infinite alternate; /* Animación de parpadeo para el descuento */
 }
 
 @keyframes blink {
@@ -259,17 +295,46 @@ footer {
 .registro-form-section {
     max-width: 700px;
     margin: 50px auto;
+    padding: 30px; /* Padding interno para el formulario */
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra más pronunciada para el formulario */
 }
 
+.registro-form-section h2 {
+    color: var(--color-secundario);
+    margin-bottom: 30px;
+    font-size: 2em;
+}
 
-.footer-dynamic-color {
+/* Estilo para el botón de "Limpiar Formulario" */
+.registro-form-section .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.registro-form-section .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+/* Estilo para el botón de "Enviar Formulario" */
+.registro-form-section .btn-primary {
     background-color: var(--color-primario);
-    transition: background-color 0.5s ease;
+    border-color: var(--color-primario);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* --- SOLUCIÓN PARA EL ICONO DEL OJO Y FEEDBACK (Ajustado para no superponerse) --- */
+.registro-form-section .btn-primary:hover {
+    background-color: #287bb8; /* Un tono más oscuro de azul */
+    border-color: #287bb8;
+}
 
-/* Eliminar el icono de revelación de contraseña por defecto del navegador */
+
+/* --- ESTILOS PARA EL ICONO DEL OJO Y VALIDACIÓN EN password-input-container --- */
+
+/* Eliminar el icono de revelación de contraseña por defecto del navegador (para consistencia) */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear,
 input[type="password"]::-webkit-credentials-auto-fill-button,
@@ -281,82 +346,88 @@ input[type="password"]::-webkit-input-password-toggle {
     display: none !important;
 }
 
-/* Contenedor principal del input y el ojo */
+/* Contenedor principal del input y el ojo. Usamos relative para posicionar el ojo. */
 .password-input-container {
-    position: relative; /* FUNDAMENTAL para posicionar el ojo absolutamente dentro */
-    width: 100%; /* Asegura que ocupe todo el ancho disponible */
+    position: relative;
+    width: 100%;
 }
 
-/* Estilos para el input de contraseña */
-.password-input-container input[type="password"],
-.password-input-container input[type="text"] {
-    /* Darle suficiente padding-right para el icono del ojo Y el icono de validación de Bootstrap */
-    padding-right: 5rem !important; /* Aumentado a 5rem (aprox. 80px) */
-    background-repeat: no-repeat;
-    /* Mueve el icono de validación de Bootstrap más a la izquierda para evitar colisiones */
-    /* Este valor (2.8rem) es la distancia desde el borde derecho del input para el icono de validación */
-    background-position: right calc(0.375em + 2.8rem) center; 
-    background-size: calc(.75em + .375rem) calc(.75em + .375rem); /* Tamaño estándar de Bootstrap */
+/* Estilos para el input de contraseña dentro del contenedor */
+/* Aumentamos el padding-right para dar espacio suficiente a ambos íconos (ojo y validación Bootstrap) */
+.password-input-container input.form-control {
+    /* Un valor generoso: 1rem (padding Bootstrap) + 1.25rem (icono Bootstrap) + 0.5rem (margen) + 2rem (ojo) = 4.75rem.
+        Probaremos con un poco más para asegurar espacio: 5.5rem. */
+    padding-right: 5.5rem !important; /* Ajusta este valor si los íconos se superponen */
+    /* El !important es necesario para sobrescribir las reglas de Bootstrap */
 }
 
-/* Ajustes específicos para los inputs de contraseña cuando son válidos/inválidos */
-/* Mantiene la posición ajustada del icono de Bootstrap para validación */
+/* Ajustes para el icono de validación de Bootstrap (check o exclamación) */
+/* Lo movemos a la izquierda para que no colisione con el botón del ojo */
 .password-input-container input.is-valid,
 .password-input-container input.is-invalid {
-    background-position: right calc(0.375em + 2.8rem) center !important;
+    /* El 0.75rem es el offset derecho predeterminado de Bootstrap para el background-position.
+        Aquí queremos moverlo más a la izquierda para dejar espacio para nuestro ojo.
+        Calculamos: 'offset default' + 'ancho icono ojo (aprox 2.25rem incluyendo su padding)'
+        0.75rem + 2.25rem = 3rem. */
+    background-position: right 3rem center !important; /* AFINA ESTE VALOR SI ES NECESARIO */
+    background-size: 1.25rem !important; /* Tamaño estándar del icono de validación de Bootstrap */
 }
 
-/* Estilos para el botón del ojo (AHORA ABSOLUTO DENTRO DEL INPUT) */
-.toggle-password {
-    position: absolute; /* POSICIONAMIENTO ABSOLUTO dentro del contenedor */
-    right: 0.8rem; /* Distancia del borde derecho del input. Ajusta este valor */
+
+/* Estilos para el botón del ojo (ABSOLUTO dentro del CONTENEDOR) */
+.password-input-container .toggle-password {
+    position: absolute;
+    /* Posición desde la derecha: 0.75rem es el padding default de Bootstrap para el input-group-text.
+        Ajustamos para que el ojo esté bien pegado al borde derecho del input pero sin superponerse. */
+    right: 0.75rem; /* Posición del botón del ojo desde el borde derecho del input. AJUSTA ESTE VALOR. */
     top: 50%; /* Centra verticalmente */
     transform: translateY(-50%); /* Ajuste fino para centrado vertical perfecto */
     color: #6c757d; /* Color por defecto del texto secundario de Bootstrap */
     font-size: 1.1em;
-    padding: 0.2rem 0.5rem; /* Padding ligero para un área de clic cómoda, pero sin exagerar */
-    border: none;
-    background-color: transparent; /* Asegura que no tenga fondo */
+    padding: 0.2rem 0.5rem; /* Padding ligero para un área de clic cómoda */
+    border: none; /* Sin borde */
+    background-color: transparent; /* Fondo transparente */
     cursor: pointer;
-    z-index: 2; /* Asegura que esté por encima del input y del icono de Bootstrap */
+    z-index: 3; /* Asegura que el ojo esté por encima del input y del icono de Bootstrap */
+    opacity: 0.8; /* Ligeramente transparente */
+    transition: opacity 0.2s ease, color 0.2s ease; /* Transiciones suaves */
 }
 
-.toggle-password:hover {
+.password-input-container .toggle-password:hover {
     color: #343a40; /* Color oscuro al pasar el ratón */
+    opacity: 1; /* Opacidad completa */
     background-color: transparent;
     box-shadow: none;
 }
 
-.toggle-password:focus {
-    outline: none;
-    box-shadow: none;
+.password-input-container .toggle-password:focus {
+    outline: none; /* Elimina el contorno de foco por defecto */
+    box-shadow: none; /* Elimina cualquier sombra de foco */
 }
 
-.toggle-password i {
-    pointer-events: none; /* Evita problemas de selección de texto */
+.password-input-container .toggle-password i {
+    pointer-events: none; /* Evita que el clic en el ícono capture el evento del botón */
 }
 
-/* Estilos para el feedback de validación */
-/* Estas reglas son CRUCIALES para que el mensaje de error sea visible y se comporte correctamente */
-/* La regla .password-input-container + .invalid-feedback selecciona el div .invalid-feedback que es hermano adyacente */
-.password-input-container + .invalid-feedback { 
-    display: block; /* Asegura que siempre esté en el flujo del documento */
-    height: 0; /* Por defecto tiene 0 altura para que no ocupe espacio cuando está oculto */
-    opacity: 0; /* Por defecto es transparente */
-    overflow: hidden; /* Oculta el contenido si se desborda mientras está colapsado */
-    transition: height 0.3s ease-out, opacity 0.3s ease-out; /* Animación de transición */
-    color: #dc3545; /* Color de texto estándar de Bootstrap para errores */
-    font-size: 0.875em; /* Tamaño de fuente estándar de Bootstrap */
-    margin-top: 0.25rem; /* Pequeño margen superior */
+/* Estilos para el feedback de validación (mensajes de error/éxito) */
+.invalid-feedback, .valid-feedback {
+    display: none; /* Por defecto están ocultos, Bootstrap o JS los mostrarán */
+    width: 100%; /* Asegura que ocupen todo el ancho disponible */
+    margin-top: 0.25rem; /* Pequeño margen superior para separar del input/contenedor */
+    font-size: 0.875em; /* Tamaño de fuente estándar de Bootstrap para feedback */
+    /* Asegúrate de que el color del invalid-feedback sea el de Bootstrap para errores */
+    color: var(--bs-form-invalid-color, #dc3545); /* Color de Bootstrap para errores */
 }
 
-/* Cuando Bootstrap añade la clase 'is-invalid' al input, el feedback se muestra */
-/* Usamos ~ para seleccionar cualquier hermano siguiente del .password-input-container */
-.password-input-container input.is-invalid ~ .invalid-feedback { 
-    height: auto; /* Permite que el contenido determine la altura */
-    max-height: 50px; /* Una altura máxima para evitar desbordamientos inesperados */
-    opacity: 1; /* Hace el texto visible */
+/* Reglas para mostrar el feedback:
+    - Cuando el formulario tiene 'was-validated' Y el contenedor tiene un input 'is-invalid'/'is-valid'.
+    - El selector :has() tiene buena compatibilidad moderna.
+*/
+.was-validated .password-input-container:has(input.is-invalid) + .invalid-feedback,
+.was-validated .password-input-container:has(input.is-valid) + .valid-feedback {
+    display: block !important; /* Muestra el feedback */
 }
+/* Tu JS también añade 'd-block' directamente, lo cual es redundante con esta regla, pero asegura que se muestre. */
 
 /* --- Media Queries para Responsividad --- */
 
@@ -403,98 +474,89 @@ input[type="password"]::-webkit-input-password-toggle {
     }
 
     /* === AJUSTES PARA BOTONES EN MÓVILES === */
-    /* Apunta al div con col-12 y text-end para flexbox */
-    .registro-form-section .col-12.text-end { 
+    .registro-form-section .col-12.text-end {
         display: flex;
-        flex-direction: column; /* Apila los botones verticalmente */
-        align-items: center; /* Centra los botones apilados */
-        text-align: center !important; /* Sobreescribe text-end de Bootstrap */
+        flex-direction: column;
+        align-items: center;
+        text-align: center !important;
     }
 
     .registro-form-section .btn {
-        width: 100%; /* Haz que los botones ocupen todo el ancho disponible */
-        margin-bottom: 10px; /* Añade un margen en la parte inferior para separarlos */
-        margin-right: 0 !important; /* Elimina el margen derecho de Bootstrap (me-2) */
-        margin-left: 0 !important; /* Elimina el margen izquierdo si existe */
+        width: 100%;
+        margin-bottom: 10px;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
     }
 
-    /* Quita el margen inferior del último botón para que no haya espacio extra */
     .registro-form-section .btn:last-child {
         margin-bottom: 0;
     }
 
-    /* === AJUSTES PARA EL ICONO DEL OJO Y VALIDACIÓN EN MÓVILES === */
-    .password-input-container input[type="password"],
-    .password-input-container input[type="text"] {
-        /* Aumentamos el padding-right en móviles para asegurar espacio */
-        padding-right: 5rem !important; /* Mantenemos 5rem también en móviles */
-        /* Ajustamos la posición del icono de validación de Bootstrap en móvil */
-        /* Puede que necesites ajustar este valor (ej. 2.2rem, 2.5rem) */
-        background-position: right calc(0.375em + 2.5rem) center; 
+    /* === AJUSTES ESPECÍFICOS PARA EL OJO Y VALIDACIÓN EN MÓVILES === */
+    .password-input-container input.form-control {
+        padding-right: 4.5rem !important; /* Ligeramente menos espacio para el ojo en móviles */
     }
 
     .password-input-container input.is-valid,
     .password-input-container input.is-invalid {
-        background-position: right calc(0.375em + 2.5rem) center !important;
+        background-position: right 2.5rem center !important; /* Ajusta para móviles */
+        background-size: 1.1rem !important; /* Icono de validación ligeramente más pequeño en móviles */
     }
 
-    .toggle-password {
-        right: 0.8rem; /* Mantener la misma posición del ojo que en desktop para consistencia */
-        font-size: 1.1em; /* Mantener mismo tamaño */
-        padding: 0.2rem 0.5rem; /* Mantener mismo padding */
+    .password-input-container .toggle-password {
+        right: 0.5rem; /* Ajusta la posición del ojo para móviles */
+        font-size: 0.9em; /* Ligeramente más pequeño para móviles */
     }
 }
 
 /* Tablets (entre 768px y 991.98px) */
 @media (min-width: 768px) and (max-width: 991.98px) {
     .categoria-grid {
-        grid-template-columns: repeat(2, 1fr); /* Dos columnas para categorías */
+        grid-template-columns: repeat(2, 1fr);
     }
     .listado-juegos {
-        grid-template-columns: repeat(2, 1fr); /* Dos columnas para juegos */
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    /* Asegura que los botones no se apilen en tablets si no quieres */
     .registro-form-section .col-12.text-end {
-        display: block; /* O d-flex justify-content-end */
-        text-align: end !important; 
+        display: block;
+        text-align: end !important;
     }
     .registro-form-section .btn {
-        width: auto; /* Vuelve a tamaño natural */
-        margin-bottom: 0; /* Quita el margen de apilamiento */
-        margin-right: 0.5rem !important; /* Mantén el margen de Bootstrap como el me-2 si lo tienes */
+        width: auto;
+        margin-bottom: 0;
+        margin-right: 0.5rem !important;
     }
     .registro-form-section .btn:last-child {
         margin-right: 0 !important;
     }
 
     /* Ajustes específicos para el ojo en tablets */
-    .password-input-container input[type="password"],
-    .password-input-container input[type="text"] {
-        padding-right: 5rem !important; /* Mantén el mismo padding que en escritorio si funciona bien */
-        background-position: right calc(0.375em + 2.8rem) center; /* Igual que en escritorio */
+    .password-input-container input.form-control {
+        padding-right: 5rem !important;
     }
-    .toggle-password {
-        right: 0.8rem; /* Igual que en escritorio */
+    .password-input-container input.is-valid,
+    .password-input-container input.is-invalid {
+        background-position: right 2.8rem center !important;
+    }
+    .password-input-container .toggle-password {
+        right: 0.75rem;
     }
 }
 
 /* Escritorio (992px y más) */
 @media (min-width: 992px) {
-    /* Restaura el text-end para los botones en escritorio */
     .registro-form-section .col-12.text-end {
-        display: block; /* O d-flex justify-content-end */
-        text-align: end !important; 
+        display: block;
+        text-align: end !important;
     }
 
-    /* Los botones en escritorio vuelven a su tamaño natural y espaciado de Bootstrap */
     .registro-form-section .btn {
         width: auto;
-        margin-bottom: 0; /* Quita el margen inferior de móvil */
-        margin-right: 0.5rem !important; /* Asegura que el margen me-2 de Bootstrap se aplique */
+        margin-bottom: 0;
+        margin-right: 0.5rem !important;
     }
 
-    /* Quita el margen del último botón si lo quitaste en móvil y no lo quieres en escritorio */
     .registro-form-section .btn:last-child {
         margin-right: 0 !important;
     }
