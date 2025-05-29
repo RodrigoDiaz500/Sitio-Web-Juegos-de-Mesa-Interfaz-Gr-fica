@@ -270,8 +270,14 @@ footer {
 
 /* Teléfonos (hasta 767.98px) */
 @media (max-width: 767.98px) {
-
-
+    .registro-form-section .form-control {
+        width: 100%;
+        min-width: 0;
+    }
+    .password-input-container {
+        width: 100%;
+        min-width: 0;
+    }
 
     .registro-form-section .btn {
         width: 100%; /* los botones ocupan todo el ancho disponible */
