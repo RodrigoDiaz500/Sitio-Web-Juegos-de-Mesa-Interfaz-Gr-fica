@@ -101,18 +101,29 @@ nav a {
     text-decoration: none;
     padding: 10px var(--espaciado-mediano);
     display: inline-block; /* Permite aplicar padding y centrado */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Transiciones suaves */
+    /* Transiciones para el efecto de hover deseado */
+    transition: background-color 0.3s ease, transform 0.2s ease, text-shadow 0.2s ease;
     font-weight: bold;
 }
 
+/* Efecto de hover para los enlaces de navegación - Replicando el JS */
 nav a:hover {
-    background-color: var(--color-primario);
-    transform: translateY(-2px); /* Pequeño efecto de elevación al pasar el mouse */
+    background-color: rgba(255, 255, 255, 0.2); /* Fondo semitransparente blanco */
+    transform: scale(1.05); /* Escala ligeramente el enlace */
+    text-shadow: 0 0 5px rgba(255,255,255,0.7); /* Sombra para el texto */
 }
 
 nav a.active {
     background-color: var(--color-primario);
     box-shadow: inset 0 0 10px rgba(0,0,0,0.3); /* Sombra interna para el elemento activo */
+}
+
+h2 {
+    color: var(--color-secundario);
+    margin-top: 20px;
+    text-align: center;
+    font-size: 2em;
+    animation: fadeIn 1s ease-out; /* Animación de entrada para los títulos */
 }
 
 main {
@@ -123,14 +134,6 @@ main {
     box-shadow: 0 0 15px rgba(0,0,0,0.05); /* Sombra ligera para el área de contenido */
     border-radius: 8px; /* Bordes redondeados */
     background-color: white; /* Fondo blanco para el contenido */
-}
-
-h2 {
-    color: var(--color-secundario);
-    margin-top: 0;
-    font-size: 2em;
-    text-align: center; /* Centra los títulos */
-    animation: fadeInUp 1s ease-out; /* Animación de entrada para los títulos */
 }
 
 footer {
@@ -177,6 +180,7 @@ footer {
     animation: pulse 0.5s forwards; /* Animación de pulso */
 }
 
+/* Definición de la animación de pulso */
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.02); }
@@ -242,6 +246,7 @@ footer {
 .juego-ficha:hover {
     transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
     box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* Sombra más pronunciada al pasar el mouse */
+    animation: pulse 0.5s forwards; /* Aplica también el pulso a las fichas de juego */
 }
 
 .juego-ficha img {
@@ -349,42 +354,29 @@ input[type="password"]::-webkit-input-password-toggle {
 /* Contenedor principal del input y el ojo. Usamos relative para posicionar el ojo. */
 .password-input-container {
     position: relative;
-    width: 100%;
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
+    /* Aquí NO debe haber display: flex; en el contenedor para que el ojo se posicione SOBRE el input */
 }
 
 /* Estilos para el input de contraseña dentro del contenedor */
 /* Aumentamos el padding-right para dar espacio suficiente a ambos íconos (ojo y validación Bootstrap) */
 .password-input-container input.form-control {
-    /* Un valor generoso: 1rem (padding Bootstrap) + 1.25rem (icono Bootstrap) + 0.5rem (margen) + 2rem (ojo) = 4.75rem.
-        Probaremos con un poco más para asegurar espacio: 5.5rem. */
-    padding-right: 5.5rem !important; /* Ajusta este valor si los íconos se superponen */
+    /* Padding para escritorio:
+       Aproximadamente 0.75rem (padding default) + 1.25rem (icono Bootstrap) + 0.5rem (espacio entre iconos) + 1.5rem (ancho ojo)
+       = 4rem. Usaremos un valor más seguro. */
+    padding-right: 4.8rem !important; /* AFINA ESTE VALOR SI LOS ÍCONOS SE SUPERPONEN */
     /* El !important es necesario para sobrescribir las reglas de Bootstrap */
 }
 
-/* Ajustes para el icono de validación de Bootstrap (check o exclamación) */
-/* Lo movemos a la izquierda para que no colisione con el botón del ojo */
-.password-input-container input.is-valid,
-.password-input-container input.is-invalid {
-    /* El 0.75rem es el offset derecho predeterminado de Bootstrap para el background-position.
-        Aquí queremos moverlo más a la izquierda para dejar espacio para nuestro ojo.
-        Calculamos: 'offset default' + 'ancho icono ojo (aprox 2.25rem incluyendo su padding)'
-        0.75rem + 2.25rem = 3rem. */
-    background-position: right 3rem center !important; /* AFINA ESTE VALOR SI ES NECESARIO */
-    background-size: 1.25rem !important; /* Tamaño estándar del icono de validación de Bootstrap */
-}
-
-
 /* Estilos para el botón del ojo (ABSOLUTO dentro del CONTENEDOR) */
 .password-input-container .toggle-password {
-    position: absolute;
-    /* Posición desde la derecha: 0.75rem es el padding default de Bootstrap para el input-group-text.
-        Ajustamos para que el ojo esté bien pegado al borde derecho del input pero sin superponerse. */
+    position: absolute; /* Esto lo saca del flujo normal y lo superpone */
     right: 0.75rem; /* Posición del botón del ojo desde el borde derecho del input. AJUSTA ESTE VALOR. */
     top: 50%; /* Centra verticalmente */
     transform: translateY(-50%); /* Ajuste fino para centrado vertical perfecto */
     color: #6c757d; /* Color por defecto del texto secundario de Bootstrap */
     font-size: 1.1em;
-    padding: 0.2rem 0.5rem; /* Padding ligero para un área de clic cómoda */
+    padding: 0.2rem 0.3rem; /* Padding ligero para un área de clic cómoda. Reducido a 0.3rem horizontal. */
     border: none; /* Sin borde */
     background-color: transparent; /* Fondo transparente */
     cursor: pointer;
@@ -409,13 +401,24 @@ input[type="password"]::-webkit-input-password-toggle {
     pointer-events: none; /* Evita que el clic en el ícono capture el evento del botón */
 }
 
+/* Ajustes para el icono de validación de Bootstrap (check o exclamación) */
+/* Lo movemos a la izquierda para que no colisione con el botón del ojo */
+.password-input-container input.is-valid,
+.password-input-container input.is-invalid {
+    /* Posición del icono de Bootstrap:
+       right: 0.75rem (default bootstrap offset) + 1.5rem (ancho del ojo) + 0.2rem (pequeño margen) = 2.45rem
+       Vamos a redondear y probar con un valor seguro. */
+    background-position: right 2.4rem center !important; /* AFINA ESTE VALOR SI ES NECESARIO */
+    background-size: 1.25rem !important; /* Tamaño estándar del icono de validación de Bootstrap */
+}
+
+
 /* Estilos para el feedback de validación (mensajes de error/éxito) */
 .invalid-feedback, .valid-feedback {
     display: none; /* Por defecto están ocultos, Bootstrap o JS los mostrarán */
     width: 100%; /* Asegura que ocupen todo el ancho disponible */
     margin-top: 0.25rem; /* Pequeño margen superior para separar del input/contenedor */
     font-size: 0.875em; /* Tamaño de fuente estándar de Bootstrap para feedback */
-    /* Asegúrate de que el color del invalid-feedback sea el de Bootstrap para errores */
     color: var(--bs-form-invalid-color, #dc3545); /* Color de Bootstrap para errores */
 }
 
@@ -427,7 +430,6 @@ input[type="password"]::-webkit-input-password-toggle {
 .was-validated .password-input-container:has(input.is-valid) + .valid-feedback {
     display: block !important; /* Muestra el feedback */
 }
-/* Tu JS también añade 'd-block' directamente, lo cual es redundante con esta regla, pero asegura que se muestre. */
 
 /* --- Media Queries para Responsividad --- */
 
@@ -473,39 +475,52 @@ input[type="password"]::-webkit-input-password-toggle {
         padding-right: calc(var(--bs-gutter-x) * .5);
     }
 
-    /* === AJUSTES PARA BOTONES EN MÓVILES === */
+    /* === AJUSTES PARA LOS BOTONES ESPECÍFICOS DEL FORMULARIO EN MÓVILES === */
     .registro-form-section .col-12.text-end {
+        /* Usamos flexbox para apilar y centrar los botones */
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center !important;
+        flex-direction: column; /* Apila los botones verticalmente */
+        align-items: center; /* Centra los botones horizontalmente */
+        text-align: center !important; /* Asegura el centrado del texto en el contenedor */
     }
 
-    .registro-form-section .btn {
-        width: 100%;
-        margin-bottom: 10px;
-        margin-right: 0 !important;
-        margin-left: 0 !important;
+    .registro-form-section .form-action-btn { /* Afecta solo a los botones con esta clase */
+        width: 100%; /* HACER QUE LOS BOTONES OCUPEN TODO EL ANCHO DISPONIBLE */
+        margin-bottom: 10px; /* Espacio entre los botones apilados */
+        margin-right: 0 !important; /* Eliminar márgenes horizontales de Bootstrap */
+        margin-left: 0 !important; /* Eliminar márgenes horizontales de Bootstrap */
     }
 
-    .registro-form-section .btn:last-child {
-        margin-bottom: 0;
+    .registro-form-section .form-action-btn:last-child {
+        margin-bottom: 0; /* Eliminar el margen inferior del último botón */
     }
 
-    /* === AJUSTES ESPECÍFICOS PARA EL OJO Y VALIDACIÓN EN MÓVILES === */
+    /* === AJUSTES ESPECÍFICOS PARA EL OJO Y VALIDACIÓN EN MÓVILES (RESTAURADOS) === */
     .password-input-container input.form-control {
-        padding-right: 4.5rem !important; /* Ligeramente menos espacio para el ojo en móviles */
+        /* Padding para móviles:
+           El icono de validación de Bootstrap en móvil es 1.1rem
+           El ojo en móvil es 0.9em (aprox 1.0rem) + 2*0.2rem (padding horizontal) = 1.4rem
+           Espacio entre iconos: 0.2rem
+           Padding default de Bootstrap: 0.75rem
+           Total: 0.75 + 1.1 + 0.2 + 1.4 = 3.45rem. Probaremos con 3.8rem para seguridad. */
+        padding-right: 3.8rem !important; /* AFINA ESTE VALOR CON MUCHO CUIDADO */
     }
 
     .password-input-container input.is-valid,
     .password-input-container input.is-invalid {
-        background-position: right 2.5rem center !important; /* Ajusta para móviles */
+        /* Posición del icono de validación para móviles:
+           Debe estar a la izquierda del ojo.
+           right: 0.75rem (default bootstrap offset) + 1.4rem (ancho del ojo) + 0.2rem (pequeño margen) = 2.35rem
+           Vamos a redondear. */
+        background-position: right 2.2rem center !important; /* AFINA ESTE VALOR CON MUCHO CUIDADO */
         background-size: 1.1rem !important; /* Icono de validación ligeramente más pequeño en móviles */
     }
 
     .password-input-container .toggle-password {
-        right: 0.5rem; /* Ajusta la posición del ojo para móviles */
+        /* Ajusta la posición del ojo para móviles */
+        right: 0.5rem; /* Pégalo al borde derecho del input */
         font-size: 0.9em; /* Ligeramente más pequeño para móviles */
+        padding: 0.2rem 0.2rem; /* Reduce un poco más el padding horizontal del ojo */
     }
 }
 
@@ -518,46 +533,50 @@ input[type="password"]::-webkit-input-password-toggle {
         grid-template-columns: repeat(2, 1fr);
     }
 
+    /* Restaurar comportamiento de botones en tablets */
     .registro-form-section .col-12.text-end {
-        display: block;
-        text-align: end !important;
+        display: block; /* Vuelve a block para que no afecte el layout en tablets */
+        text-align: end !important; /* Alinea los botones a la derecha */
     }
-    .registro-form-section .btn {
-        width: auto;
-        margin-bottom: 0;
-        margin-right: 0.5rem !important;
+    .registro-form-section .form-action-btn { /* Afecta solo a los botones con esta clase */
+        width: auto; /* Vuelve al ancho automático de Bootstrap */
+        margin-bottom: 0; /* Elimina el margen inferior */
+        margin-right: 0.5rem !important; /* Vuelve al margen derecho entre botones */
     }
-    .registro-form-section .btn:last-child {
+    .registro-form-section .form-action-btn:last-child {
         margin-right: 0 !important;
     }
 
-    /* Ajustes específicos para el ojo en tablets */
+    /* Restaurar comportamiento de ojo en tablets (como escritorio) */
     .password-input-container input.form-control {
-        padding-right: 5rem !important;
+        padding-right: 4.8rem !important; /* Restaurar padding de escritorio */
     }
     .password-input-container input.is-valid,
     .password-input-container input.is-invalid {
-        background-position: right 2.8rem center !important;
+        background-position: right 2.4rem center !important; /* Restaurar posición icono Bootstrap */
     }
     .password-input-container .toggle-password {
-        right: 0.75rem;
+        right: 0.75rem; /* Restaurar posición del ojo */
+        font-size: 1.1em; /* Restaurar tamaño del ojo */
+        padding: 0.2rem 0.3rem; /* Restaurar padding del ojo */
     }
 }
 
 /* Escritorio (992px y más) */
 @media (min-width: 992px) {
+    /* Restaurar comportamiento de botones en escritorio */
     .registro-form-section .col-12.text-end {
         display: block;
         text-align: end !important;
     }
 
-    .registro-form-section .btn {
+    .registro-form-section .form-action-btn { /* Afecta solo a los botones con esta clase */
         width: auto;
         margin-bottom: 0;
         margin-right: 0.5rem !important;
     }
 
-    .registro-form-section .btn:last-child {
+    .registro-form-section .form-action-btn:last-child {
         margin-right: 0 !important;
     }
 }

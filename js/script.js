@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 1500); // Wait 1.5 seconds before resetting
         } else {
             registroForm.classList.add('was-validated'); // If failure, add Bootstrap's class to show errors
-            formMessage.textContent = 'Por favor, corrige los errores en el formulario para continuar.';
+            formMessage.textContent = 'Por favor, llena la información solicitada correctamente.';
             formMessage.classList.remove('text-success');
             formMessage.classList.add('text-danger');
             updateFooterColor(false); // Change footer color to red
@@ -319,24 +319,6 @@ document.addEventListener('DOMContentLoaded', function() {
         welcomeMessageElement.style.marginTop = '10px';
         siteBranding.appendChild(welcomeMessageElement);
     }
-
-    // Example 3: Dynamic CSS manipulation (changing nav link styles on hover)
-    const navLinks = document.querySelectorAll('nav a');
-    navLinks.forEach(link => {
-        link.addEventListener('mouseenter', () => {
-            link.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'; // Semi-transparent white
-            link.style.transform = 'scale(1.05)';
-            link.style.textShadow = '0 0 5px rgba(255,255,255,0.7)';
-        });
-        link.addEventListener('mouseleave', () => {
-            link.style.backgroundColor = ''; // Revert to original
-            link.style.transform = 'scale(1)';
-            link.style.textShadow = 'none';
-        });
-        // Ensure initial transition is set
-        link.style.transition = 'background-color 0.3s ease, transform 0.2s ease, text-shadow 0.2s ease';
-    });
-
     // Initial footer color set on page load
     resetFooterColor();
 });
