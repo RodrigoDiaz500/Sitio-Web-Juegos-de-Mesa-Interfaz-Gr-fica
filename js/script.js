@@ -1,61 +1,77 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const registroForm = document.getElementById('registroForm');
-    const fullNameInput = document.getElementById('fullName'); // Added
-    const usernameInput = document.getElementById('username');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('confirmPassword');
-    const dobInput = document.getElementById('dob');
-    const addressInput = document.getElementById('address'); // Added for optional check
-    const togglePasswordButtons = document.querySelectorAll('.toggle-password');
-    const mainFooter = document.getElementById('main-footer');
-    const formMessage = document.getElementById('form-message'); // Element for general messages
+    // Cuando el DOM (Document Object Model) esté completamente cargado y parseado, ejecuta esta función.
+    // Esto asegura que todos los elementos HTML estén disponibles antes de que el script intente interactuar con ellos.
 
-    // Ensure Bootstrap validation is not overriden by native HTML5 validation
-    registroForm.setAttribute('novalidate', '');
-    registroForm.classList.add('needs-validation');
+    // --- Referencias a elementos del DOM ---
+    // Obtenemos referencias a los elementos HTML por su ID.
+    const registroForm = document.getElementById('registroForm'); // El formulario de registro completo
+    const fullNameInput = document.getElementById('fullName'); // Campo de entrada para el nombre completo
+    const usernameInput = document.getElementById('username'); // Campo de entrada para el nombre de usuario
+    const emailInput = document.getElementById('email'); // Campo de entrada para el correo electrónico
+    const passwordInput = document.getElementById('password'); // Campo de entrada para la contraseña
+    const confirmPasswordInput = document.getElementById('confirmPassword'); // Campo de entrada para confirmar la contraseña
+    const dobInput = document.getElementById('dob'); // Campo de entrada para la fecha de nacimiento (DOB - Date of Birth)
+    const addressInput = document.getElementById('address'); // Campo de entrada para la dirección (opcional)
+    const togglePasswordButtons = document.querySelectorAll('.toggle-password'); // Todos los botones "ojo" para mostrar/ocultar contraseña
+    const mainFooter = document.getElementById('main-footer'); // El elemento footer principal
+    const formMessage = document.getElementById('form-message'); // Elemento para mostrar mensajes generales al usuario (éxito/error)
 
-    // Function to update footer color based on form validity
+    // --- Configuración inicial del formulario para Bootstrap ---
+    // Asegura que la validación nativa de HTML5 no interfiera con la de Bootstrap/JavaScript.
+    registroForm.setAttribute('novalidate', ''); // Deshabilita la validación por defecto del navegador
+    registroForm.classList.add('needs-validation'); // Añade la clase de Bootstrap para estilos de validación
+
+    // --- Funciones ---
+
+    /**
+     * Actualiza el color de fondo del footer.
+     * @param {boolean} isValid - true si el formulario es válido, false si es inválido.
+     */
     function updateFooterColor(isValid) {
-        if (mainFooter) {
+        if (mainFooter) { // Verifica que el footer exista
             if (isValid) {
-                mainFooter.style.backgroundColor = '#27ae60'; // Green for valid
+                mainFooter.style.backgroundColor = '#27ae60'; // Verde para indicar éxito
             } else {
-                mainFooter.style.backgroundColor = '#e74c3c'; // Red for invalid
+                mainFooter.style.backgroundColor = '#e74c3c'; // Rojo para indicar error
             }
         }
     }
 
-    // Function to reset footer color to default (from CSS)
+    /**
+     * Restablece el color de fondo del footer a su valor por defecto (definido en CSS).
+     */
     function resetFooterColor() {
-        if (mainFooter) {
-            mainFooter.style.backgroundColor = ''; // Revert to CSS default
+        if (mainFooter) { // Verifica que el footer exista
+            mainFooter.style.backgroundColor = ''; // Elimina el estilo inline para que aplique el CSS por defecto
         }
     }
 
-    // Helper function to get the feedback element (invalid-feedback/valid-feedback)
+    /**
+     * Busca y devuelve el elemento de feedback (invalid-feedback o valid-feedback) asociado a un input.
+     * @param {HTMLElement} inputElement - El elemento input al que se busca el feedback.
+     * @returns {HTMLElement|null} El elemento de feedback encontrado o null si no se encuentra.
+     */
     function getFeedbackElement(inputElement) {
-        // Specific feedback IDs for password fields
         if (inputElement.id === 'password' && document.getElementById('passwordFeedback')) {
             return document.getElementById('passwordFeedback');
         }
         if (inputElement.id === 'confirmPassword' && document.getElementById('confirmPasswordFeedback')) {
             return document.getElementById('confirmPasswordFeedback');
         }
-        if (inputElement.id === 'dob' && document.getElementById('dobFeedback')) { // Added for DOB
+        if (inputElement.id === 'dob' && document.getElementById('dobFeedback')) {
             return document.getElementById('dobFeedback');
         }
 
-        // Try to find the next sibling with feedback classes
+
         let currentSibling = inputElement.nextElementSibling;
         while (currentSibling) {
             if (currentSibling.classList.contains('invalid-feedback') || currentSibling.classList.contains('valid-feedback')) {
                 return currentSibling;
             }
-            currentSibling = currentSibling.nextElementSibling;
+            currentSibling = currentSibling.nextElementSibling; 
         }
 
-        // If input is wrapped in a container (like .input-group), feedback might be sibling of the parent
+    
         if (inputElement.parentElement && inputElement.parentElement.classList.contains('input-group')) {
             let parentSibling = inputElement.parentElement.nextElementSibling;
             while (parentSibling) {
@@ -66,50 +82,65 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // As a last resort, check within the immediate parent (useful for checkboxes/radios)
+
         if (inputElement.parentElement) {
             const directChildFeedback = inputElement.parentElement.querySelector('.invalid-feedback, .valid-feedback');
             if (directChildFeedback) return directChildFeedback;
         }
 
-        return null;
+
+        return null; 
     }
 
-    // Function to show/hide Bootstrap feedback messages
+    /**
+     * Muestra u oculta los mensajes de feedback de validación de Bootstrap y actualiza las clases del input.
+     * @param {HTMLElement} input - El elemento input al que se aplica el feedback.
+     * @param {string} message - El mensaje a mostrar (vacío para feedback válido).
+     * @param {boolean} isValid - true para feedback válido (verde), false para feedback inválido (rojo).
+     */
     function showFeedback(input, message, isValid) {
-        const feedbackElement = getFeedbackElement(input);
+        const feedbackElement = getFeedbackElement(input); // Obtiene el elemento de feedback
+
+        // Elimina clases de validación previas del input
+        input.classList.remove('is-valid', 'is-invalid');
+
         if (feedbackElement) {
-            // Remove previous feedback classes
-            feedbackElement.classList.remove('d-block');
-            input.classList.remove('is-valid', 'is-invalid');
+            // Limpia clases de feedback previas del elemento de feedback
+            feedbackElement.classList.remove('d-block', 'valid-feedback', 'invalid-feedback');
 
             if (!isValid) {
-                feedbackElement.textContent = message;
-                feedbackElement.classList.add('d-block');
-                feedbackElement.classList.remove('valid-feedback');
-                feedbackElement.classList.add('invalid-feedback');
-                input.classList.add('is-invalid');
+                feedbackElement.textContent = message; // Establece el mensaje de error
+                feedbackElement.classList.add('d-block', 'invalid-feedback'); // Muestra y marca como inválido
+                input.classList.add('is-invalid'); // Marca el input como inválido
             } else {
-                feedbackElement.textContent = ''; // Clear message if valid
-                feedbackElement.classList.remove('invalid-feedback');
-                feedbackElement.classList.add('valid-feedback');
-                input.classList.add('is-valid');
+                feedbackElement.textContent = ''; // Limpia el mensaje si es válido
+                feedbackElement.classList.add('valid-feedback'); // Marca como válido 
+                input.classList.add('is-valid'); // Marca el input como válido
             }
         }
     }
 
-    // --- Validation Functions ---
+    // --- Funciones de Validación Específicas para cada Campo ---
+
+    /**
+     * Valida el campo "Nombre Completo".
+     * @returns {boolean} true si es válido, false en caso contrario.
+     */
     function validateFullName() {
-        const fullName = fullNameInput.value.trim();
+        const fullName = fullNameInput.value.trim(); // Obtiene el valor y elimina espacios en blanco
         if (fullName === '') {
             showFeedback(fullNameInput, 'El campo Nombre Completo es obligatorio.', false);
             return false;
         } else {
-            showFeedback(fullNameInput, '', true);
+            showFeedback(fullNameInput, '', true); // No se muestra mensaje para válido, solo el borde verde
             return true;
         }
     }
 
+    /**
+     * Valida el campo "Nombre de Usuario".
+     * @returns {boolean} true si es válido, false en caso contrario.
+     */
     function validateUsername() {
         const username = usernameInput.value.trim();
         if (username.length >= 4 && username.length <= 20) {
@@ -121,8 +152,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /**
+     * Valida el campo "Correo Electrónico".
+     * @returns {boolean} true si es válido, false en caso contrario.
+     */
     function validateEmail() {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Expresión regular para validar formato de email
         if (emailRegex.test(emailInput.value.trim())) {
             showFeedback(emailInput, '', true);
             return true;
@@ -132,8 +167,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /**
+     * Valida el campo "Contraseña".
+     * @returns {boolean} true si es válido, false en caso contrario.
+     */
     function validatePassword() {
-        // Minimum 6 characters, maximum 18, at least one number and one uppercase letter
+        // Mínimo 6 caracteres, máximo 18, al menos un número y una letra mayúscula
         const passwordRegex = /^(?=.*\d)(?=.*[A-Z]).{6,18}$/;
         if (passwordRegex.test(passwordInput.value)) {
             showFeedback(passwordInput, '', true);
@@ -144,8 +183,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /**
+     * Valida el campo "Confirmar Contraseña".
+     * @returns {boolean} true si es válido, false en caso contrario.
+     */
     function validateConfirmPassword() {
-        // Only validate if password field is also valid, or if it's not empty and matches
+        // Valida solo si las contraseñas coinciden y el campo de confirmación no está vacío.
         if (confirmPasswordInput.value === passwordInput.value && confirmPasswordInput.value !== '') {
             showFeedback(confirmPasswordInput, '', true);
             return true;
@@ -155,22 +198,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /**
+     * Valida el campo "Fecha de Nacimiento" (DOB).
+     * @returns {boolean} true si es válido (al menos 13 años y fecha válida), false en caso contrario.
+     */
     function validateDob() {
         const dobValue = dobInput.value;
-        if (!dobValue) {
+        if (!dobValue) { // Si el campo está vacío
             showFeedback(dobInput, 'Por favor, introduce una fecha de nacimiento válida.', false);
             return false;
         }
 
-        const dob = new Date(dobValue);
-        const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const m = today.getMonth() - dob.getMonth();
+        const dob = new Date(dobValue); // Convierte la fecha de entrada a objeto Date
+        const today = new Date(); // Fecha actual
+        let age = today.getFullYear() - dob.getFullYear(); // Calcula la edad en años
+        const m = today.getMonth() - dob.getMonth(); // Diferencia de meses
+        // Ajusta la edad si el cumpleaños aún no ha pasado este año
         if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
             age--;
         }
 
-        if (age >= 13) { // Check for at least 13 years old
+        if (age >= 13) { // Verifica si tiene al menos 13 años
             showFeedback(dobInput, '', true);
             return true;
         } else {
@@ -179,108 +227,102 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Address is optional, so no specific `validateAddress` function is needed for emptiness.
-    // However, if you had format rules, you'd add one.
+    // --- Event Listeners para Validación en Tiempo Real ---
 
-    // --- EVENT LISTENERS ---
-
-    // Real-time validation on input/change
-    fullNameInput.addEventListener('input', validateFullName); // Added
+    // Añade un listener para cada campo de entrada que valide al escribir o cambiar el valor.
+    fullNameInput.addEventListener('input', validateFullName);
     usernameInput.addEventListener('input', validateUsername);
     emailInput.addEventListener('input', validateEmail);
-    dobInput.addEventListener('change', validateDob); // 'change' is better for date inputs
+    dobInput.addEventListener('change', validateDob); // Usa 'change' para fecha de nacimiento, ya que es un campo de tipo date
 
-    // Password and Confirm Password validation logic
+    // Lógica de validación para contraseña y confirmar contraseña:
+    // Al escribir en contraseña, valida este campo y revalida confirmar contraseña si ya tiene un valor.
     passwordInput.addEventListener('input', function() {
-        validatePassword();
-        if (confirmPasswordInput.value !== '') { // Revalidate confirm if it already has a value
-            validateConfirmPassword();
+        validatePassword(); // Valida la contraseña actual
+        if (confirmPasswordInput.value !== '') {  // Si ya hay un valor en confirmar contraseña
+            validateConfirmPassword(); // Revalida la confirmación de contraseña
         }
     });
 
+    // Al escribir en confirmar contraseña, siempre valida este campo.
     confirmPasswordInput.addEventListener('input', validateConfirmPassword);
 
 
-    // Toggle password visibility
+    // --- Funcionalidad del Ojo para Mostrar/Ocultar Contraseña ---
+    // Itera sobre todos los botones con la clase 'toggle-password'.
     togglePasswordButtons.forEach(button => {
         button.addEventListener('click', function() {
-            const targetId = this.dataset.target;
-            const targetInput = document.getElementById(targetId);
-            const icon = this.querySelector('i');
+            const targetId = this.dataset.target; // Obtiene el ID del input asociado desde el atributo data-target
+            const targetInput = document.getElementById(targetId); // Obtiene el input de contraseña
+            const icon = this.querySelector('i'); 
 
             if (targetInput.type === 'password') {
-                targetInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
+                targetInput.type = 'text'; // Cambia el tipo a texto para mostrar la contraseña
+                icon.classList.remove('fa-eye'); // Cambia el ícono de ojo abierto
+                icon.classList.add('fa-eye-slash'); // al ícono de ojo tachado
             } else {
-                targetInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                targetInput.type = 'password'; // Cambia el tipo a password para ocultar la contraseña
+                icon.classList.remove('fa-eye-slash'); // Cambia el ícono de ojo tachado
+                icon.classList.add('fa-eye'); // al ícono de ojo abierto
             }
         });
     });
 
-    // Handle form submission
+    // --- Manejo del Envío del Formulario ---
     registroForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // Stop default submission
+        event.preventDefault(); // Evita el envío por defecto del formulario (y recarga de la página)
 
-        // Execute all validations
-        const isFullNameValid = validateFullName(); // Added
+        // Ejecuta todas las funciones de validación para obtener el estado final de cada campo.
+        const isFullNameValid = validateFullName();
         const isUsernameValid = validateUsername();
         const isEmailValid = validateEmail();
         const isPasswordValid = validatePassword();
         const isConfirmPasswordValid = validateConfirmPassword();
         const isDobValid = validateDob();
 
-        // Check if all required fields are valid
+        // Verifica si todos los campos requeridos son válidos.
         const allFieldsValid = isFullNameValid && isUsernameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid && isDobValid;
 
         if (allFieldsValid) {
-            registroForm.classList.add('was-validated'); // Add Bootstrap's class for success validation display
-            formMessage.textContent = '¡Registro exitoso! Tus datos han sido enviados.';
-            formMessage.classList.remove('text-danger');
-            formMessage.classList.add('text-success');
-            updateFooterColor(true); // Change footer color to green
+            // Si todos los campos son válidos:
+            registroForm.classList.add('was-validated'); // Añade la clase de Bootstrap para mostrar validación
+            formMessage.textContent = '¡Registro exitoso! Tus datos han sido enviados.'; // Muestra mensaje de éxito
+            formMessage.classList.remove('text-danger'); // Elimina clase de error
+            formMessage.classList.add('text-success'); // Añade clase de éxito (color verde)
+            updateFooterColor(true); // Cambia el color del footer a verde
+            //
 
-            // In a real application, you would send the form data to a server here.
-            // console.log('Formulario enviado:', {
-            //     fullName: fullNameInput.value,
-            //     username: usernameInput.value,
-            //     email: emailInput.value,
-            //     // NEVER send plain passwords in a real app!
-            //     // password: passwordInput.value,
-            //     dob: dobInput.value,
-            //     address: addressInput.value // Optional field value
-            // });
-
-            // Clear the form and reset validation display after successful submission
-            setTimeout(() => { // Use timeout to allow message to display
-                registroForm.reset();
-                registroForm.classList.remove('was-validated');
+            // Limpia el formulario y restablece la visualización de validación después de un envío exitoso.
+            setTimeout(() => { // Usa setTimeout para dar tiempo a que el usuario vea el mensaje de éxito
+                registroForm.reset(); // Restablece todos los campos del formulario
+                registroForm.classList.remove('was-validated'); // Elimina la clase de Bootstrap para limpiar el estado de validación
+                // Itera sobre todos los inputs para quitar manualmente las clases de validación y los mensajes.
                 document.querySelectorAll('.form-control, .form-check-input').forEach(input => {
                     input.classList.remove('is-valid', 'is-invalid');
                     const feedback = getFeedbackElement(input);
                     if (feedback) {
                         feedback.classList.remove('d-block', 'valid-feedback', 'invalid-feedback');
-                        feedback.textContent = '';
+                        feedback.textContent = ''; // Limpia el texto del mensaje de feedback
                     }
                 });
-                formMessage.textContent = ''; // Clear success message
-                formMessage.classList.remove('text-success', 'text-danger');
-                resetFooterColor(); // Reset footer color
-            }, 1500); // Wait 1.5 seconds before resetting
+                formMessage.textContent = ''; // Limpia el mensaje de éxito/error general
+                formMessage.classList.remove('text-success', 'text-danger'); // Elimina las clases de color
+                resetFooterColor(); // Restablece el color del footer a su estado original
+            }, 1500); // Espera 1.5 segundos antes de resetear
         } else {
-            registroForm.classList.add('was-validated'); // If failure, add Bootstrap's class to show errors
-            formMessage.textContent = 'Por favor, llena la información solicitada correctamente.';
-            formMessage.classList.remove('text-success');
-            formMessage.classList.add('text-danger');
-            updateFooterColor(false); // Change footer color to red
+            // Si alguna validación falla:
+            registroForm.classList.add('was-validated'); // Añade esta clase para que Bootstrap muestre los mensajes de error
+            formMessage.textContent = 'Por favor, llena la información solicitada correctamente.'; // Muestra mensaje de error general
+            formMessage.classList.remove('text-success'); // Elimina clase de éxito
+            formMessage.classList.add('text-danger'); // Añade clase de error (color rojo)
+            updateFooterColor(false); // Cambia el color del footer a rojo
         }
     });
 
-    // Handle form reset button
+    // --- Manejo del Botón de Reinicio (Reset) del Formulario ---
     registroForm.addEventListener('reset', function() {
-        setTimeout(() => { // Allow browser to clear first, then reset classes
+        setTimeout(() => { // Usa un pequeño retraso para permitir que el navegador realice su reset primero
+            // Limpia manualmente las clases de validación y los mensajes de feedback.
             document.querySelectorAll('.form-control, .form-check-input').forEach(input => {
                 input.classList.remove('is-valid', 'is-invalid');
                 const feedback = getFeedbackElement(input);
@@ -289,36 +331,37 @@ document.addEventListener('DOMContentLoaded', function() {
                     feedback.textContent = '';
                 }
             });
-            registroForm.classList.remove('was-validated');
-            formMessage.textContent = ''; // Clear any messages
-            formMessage.classList.remove('text-success', 'text-danger');
-            resetFooterColor(); // Reset footer color
-        }, 0);
+            registroForm.classList.remove('was-validated'); // Elimina la clase para limpiar la visualización de validación
+            formMessage.textContent = ''; // Limpia cualquier mensaje general
+            formMessage.classList.remove('text-success', 'text-danger'); // Elimina las clases de color
+            resetFooterColor(); // Restablece el color del footer
+        }, 0); // Un timeout de 0ms simplemente mueve la ejecución al final de la cola de eventos
     });
 
-    // --- Dynamic CSS and HTML manipulation (Examples for requirement 6) ---
+    // --- Manipulación Dinámica de CSS y HTML ---
 
-    // Example 1: Dynamic CSS manipulation (changing footer color on scroll)
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 150) { // If scrolled down more than 150px
-            mainFooter.style.backgroundColor = '#4A90E2'; // A lighter blue/purple
-            mainFooter.style.transition = 'background-color 0.5s ease-in-out';
+        if (window.scrollY > 150) { 
+            mainFooter.style.backgroundColor = '#4A90E2'; 
+            mainFooter.style.transition = 'background-color 0.5s ease-in-out'; 
         } else {
-            // Revert to original color (from CSS variable or default)
-            mainFooter.style.backgroundColor = 'var(--color-secundario)';
+            
+            mainFooter.style.backgroundColor = 'var(--color-secundario)'; 
         }
     });
 
-    // Example 2: Dynamic HTML manipulation (adding a welcome message to the header)
-    const siteBranding = document.querySelector('.site-branding');
-    if (siteBranding && !document.getElementById('header-welcome-message')) { // Prevent adding multiple times
-        const welcomeMessageElement = document.createElement('p');
-        welcomeMessageElement.id = 'header-welcome-message';
-        welcomeMessageElement.style.color = '#e0f2f7'; // Lighter color for visibility
-        welcomeMessageElement.style.fontSize = '1.1em';
-        welcomeMessageElement.style.marginTop = '10px';
-        siteBranding.appendChild(welcomeMessageElement);
+    
+    const siteBranding = document.querySelector('.site-branding'); 
+    
+    if (siteBranding && !document.getElementById('header-welcome-message')) {
+        const welcomeMessageElement = document.createElement('p'); 
+        welcomeMessageElement.id = 'header-welcome-message'; 
+        welcomeMessageElement.style.color = '#e0f2f7'; 
+        welcomeMessageElement.style.fontSize = '1.1em'; 
+        welcomeMessageElement.style.marginTop = '10px'; 
+        welcomeMessageElement.textContent = '¡Bienvenido a nuestra tienda de juegos!'; 
+        siteBranding.appendChild(welcomeMessageElement); 
     }
-    // Initial footer color set on page load
+
     resetFooterColor();
 });
