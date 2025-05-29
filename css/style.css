@@ -1,15 +1,15 @@
 /* --- Variables CSS --- */
 :root {
-    --color-primario: #3498db; /* Azul vibrante */
-    --color-secundario: #2c3e50; /* Azul oscuro */
-    --color-fondo-claro: #ecf0f1; /* Gris claro */
+    --color-primario: #3498db; 
+    --color-secundario: #2c3e50; 
+    --color-fondo-claro: #ecf0f1; 
     --color-texto: #333;
-    --color-descuento: #27ae60; /* Verde para descuentos */
+    --color-descuento: #27ae60; 
     --espaciado-mediano: 20px;
 }
 
 /* --- Estilos Generales --- */
-/* SOLUCIÓN STICKY FOOTER: Asegura que html y body ocupen toda la altura de la ventana */
+
 html, body {
     height: 100%;
     margin: 0;
@@ -18,11 +18,9 @@ html, body {
 
 body {
     font-family: Arial, sans-serif;
-    /* margin: 0; ya cubierto por html, body */
     background-color: var(--color-fondo-claro);
     color: var(--color-texto);
     line-height: 1.6;
-    /* SOLUCIÓN STICKY FOOTER: Habilita Flexbox en el body para la distribución vertical */
     display: flex;
     flex-direction: column;
 }
@@ -34,7 +32,7 @@ header {
     padding: var(--espaciado-mediano);
 }
 
-/* --- Estilos para el Logo y el Nombre de la Tienda --- */
+/* Estilos para el Logo y el Nombre de la Tienda */
 .site-branding {
     display: flex; /* Permite alinear el logo y el texto en la misma línea */
     align-items: center; /* Centra verticalmente el logo y el texto */
@@ -43,12 +41,12 @@ header {
 }
 
 .site-logo {
-    max-height: 100px; /* Ajusta la altura máxima de tu logo */
+    max-height: 100px; /* Ajusta la altura máxima del logo */
     width: auto; /* Mantiene la proporción de la imagen */
     margin-right: 15px; /* Espacio entre el logo y el título */
-    border-radius: 50%; /* Si quieres que tu logo sea circular */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombra sutil para el logo */
-    animation: rotateIn 1s ease-out; /* Una animación para que el logo aparezca girando */
+    border-radius: 50%; /*logo circular */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+    animation: rotateIn 1s ease-out; /* animación para que el logo aparezca girando */
 }
 
 /* Animación para el logo */
@@ -63,15 +61,14 @@ header {
     }
 }
 
-/* Ajustes para el h1 dentro del branding */
+
 .site-branding h1 {
-    margin: 0; /* Elimina el margen predeterminado del h1 */
-    font-size: 2.8em; /* Ajusta el tamaño de la fuente si es necesario */
-    /* Aquí se reestablece la animación original del título, puedes ajustarla si quieres que aparezca después del logo */
+    margin: 0; 
+    font-size: 2.8em; 
     animation: fadeInDown 1.2s ease-out; /* Retrasa un poco la animación del título */
 }
 
-/* Mantengo la animación fadeInDown original, ya que no estaba ligada específicamente a .site-branding h1 */
+
 @keyframes fadeInDown {
     from {
         opacity: 0;
@@ -108,7 +105,6 @@ nav a:hover, nav a.active {
 }
 
 main {
-    /* SOLUCIÓN STICKY FOOTER: Permite que el contenido principal crezca y empuje el footer */
     flex-grow: 1;
     padding: var(--espaciado-mediano);
     max-width: 1200px;
@@ -123,7 +119,7 @@ footer {
     margin-top: 40px;
 }
 
-/* --- Estilos para la Página Principal (Categorías) --- */
+/* Estilos para la Página Principal (Categorías) */
 .categoria-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -152,7 +148,7 @@ footer {
 .categoria-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    /* --- Animación al pasar el ratón --- */
+    /* Animación al pasar el mouse  */
     animation: pulse 0.5s forwards;
 }
 
@@ -165,14 +161,14 @@ footer {
 .categoria-item img {
     width: 100%;
     height: 180px; /* Altura fija para las imágenes de categoría */
-    object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+    object-fit: cover; 
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    transition: transform 0.3s ease; /* Transición para el zoom */
+    transition: transform 0.3s ease; 
 }
 
 .categoria-item:hover img {
-    transform: scale(1.05); /* Ligerísimo zoom al pasar el ratón */
+    transform: scale(1.05); 
 }
 
 .categoria-item h3 {
@@ -181,7 +177,7 @@ footer {
     font-size: 1.3em;
 }
 
-/* --- Estilos para Páginas de Categoría (Fichas de Juegos) --- */
+
 .listado-juegos {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -251,7 +247,6 @@ footer {
     font-weight: bold;
     color: var(--color-descuento);
     font-size: 0.95em;
-    /* --- Animación de parpadeo para el descuento --- */
     animation: blink 2s infinite alternate;
 }
 
@@ -266,7 +261,7 @@ footer {
     margin: 50px auto;
 }
 
-/* Nueva clase para manipulación JS (ej. en el footer) */
+
 .footer-dynamic-color {
     background-color: var(--color-primario);
     transition: background-color 0.5s ease;
@@ -275,24 +270,21 @@ footer {
 
 /* Teléfonos (hasta 767.98px) */
 @media (max-width: 767.98px) {
-    /* ... (tu código existente para móviles) ... */
 
-    /* === AJUSTES PARA BOTONES EN MÓVILES === */
+
+
     .registro-form-section .btn {
-        width: 100%; /* Haz que los botones ocupen todo el ancho disponible */
+        width: 100%; /* los botones ocupan todo el ancho disponible */
         margin-bottom: 10px; /* Añade un margen en la parte inferior para separarlos */
-        margin-right: 0 !important; /* Asegura que no haya margen derecho de Bootstrap si usas me-2, etc. */
-        margin-left: 0 !important; /* Asegura que no haya margen izquierdo */
+        margin-right: 0 !important;
+        margin-left: 0 !important; 
     }
-
-    /* Si tienes más de un botón y quieres que se apilen */
     .registro-form-section .col-12.mt-4.text-center {
         display: flex;
         flex-direction: column; /* Apila los botones verticalmente */
         align-items: center; /* Centra los botones apilados */
     }
 
-    /* Puedes quitar el margen inferior del último botón para que no haya espacio extra al final */
     .registro-form-section .btn:last-child {
         margin-bottom: 0;
     }
