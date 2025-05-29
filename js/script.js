@@ -73,6 +73,35 @@ document.addEventListener('DOMContentLoaded', function() {
             mainHeaderH1.style.color = 'white';
         });
     }
+
+    // Mostrar/ocultar contraseña
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const inputId = this.getAttribute('data-target');
+            const input = document.getElementById(inputId);
+            const icon = this.querySelector('i');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+
+    // Validación en tiempo real
+    document.getElementById('password').addEventListener('input', function () {
+        const feedback = document.getElementById('passwordFeedback');
+        const regex = /^(?=.*[A-Z])(?=.*\d).{6,18}$/;
+        if (!regex.test(this.value)) {
+            feedback.classList.add('visible');
+        } else {
+            feedback.classList.remove('visible');
+        }
+    });
 });
 
 // --- FUNCIONES DE AYUDA PARA ENCONTRAR EL FEEDBACK ---
@@ -325,3 +354,15 @@ function validarFormulario(form) {
 
     return isValid;
 }
+
+// Validación en tiempo real para la contraseña
+document.getElementById('password').addEventListener('input', function() {
+    const feedback = this.parentElement.querySelector('.invalid-feedback');
+    // Cambia la expresión regular según tus requisitos
+    const regex = /^(?=.*[A-Z])(?=.*\d).{6,18}$/;
+    if (!regex.test(this.value)) {
+        feedback.classList.add('visible');
+    } else {
+        feedback.classList.remove('visible');
+    }
+});
